@@ -1,15 +1,18 @@
 import pygame
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS, PLAYER_SHOT_SPEED
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS, PLAYER_SHOT_SPEED, PLAYER_SHOOT_COOLDOWN
 from circleshape import CircleShape
 from bullet import Shot 
 
 
 class Player(CircleShape):
+    
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.position = pygame.Vector2(x, y)
         self.velocity = pygame.Vector2(0, 0)
         self.rotation = 0  # Player's rotation angle in degrees
+        self.timer = 0
+        
 
 
     # in the player class
@@ -27,7 +30,7 @@ class Player(CircleShape):
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
-
+        self.timer -= dt
         if keys[pygame.K_a]:
             self.rotate(-dt)
         if keys[pygame.K_d]:
@@ -44,9 +47,12 @@ class Player(CircleShape):
         self.position += forward * PLAYER_SPEED * dt
     
     def shoot(self):
-        new_shot_velocity = pygame.Vector2(0, 1).rotate(self.rotation)
-        bullet_velocity = new_shot_velocity * PLAYER_SHOT_SPEED
-        new_shot = Shot(self.position.x, self.position.y, bullet_velocity)
+        
+        if self.timer <= 0:
+            new_shot_velocity = pygame.Vector2(0, 1).rotate(self.rotation)
+            bullet_velocity = new_shot_velocity * PLAYER_SHOT_SPEED
+            new_shot = Shot(self.position.x, self.position.y, bullet_velocity)
+            self.timer += PLAYER_SHOOT_COOLDOWN
 
         
             
