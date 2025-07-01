@@ -19,6 +19,7 @@ def main():
                 return
         screen.fill((0,0,0), None, 0)
         player.draw(screen)
+        player.update(dt)
         pygame.display.flip()
         time_clock.tick(tick_rate)
         dt = time_clock.tick(tick_rate) / 1000.0  
